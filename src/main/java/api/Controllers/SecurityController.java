@@ -45,7 +45,9 @@ public class SecurityController {
     @CrossOrigin(origins = "http://localhost:3000")
     ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
 
-        signinRequest.setPassword(userService.hashUserPassword(signinRequest.getPassword()));
+        HashPassword hashPassword = new HashPassword();
+
+        signinRequest.setPassword(hashPassword.hashUserPassword(signinRequest.getPassword()));
 
         UserDetails user = userService.loadUserByUsername(signinRequest.getUserName());
 

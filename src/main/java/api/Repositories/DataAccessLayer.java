@@ -57,19 +57,9 @@ public class DataAccessLayer {
         if (userFrom != null) {
             return "Выберите другую почту";
         }
-        //TODO Удали
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] bytes = md5.digest(user.getPassword().getBytes());
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02X", b));
-        }
-        user.setPassword(builder.toString());
+
+        HashPassword hashPassword = new HashPassword();
+        user.setPassword(hashPassword.hashUserPassword(user.getPassword()));
 
 //        user.setPassword(userService.hashUserPassword(user.getPassword()));
         session.persist(user);
@@ -257,19 +247,5 @@ public class DataAccessLayer {
         session.remove(warehouse);
         session.getTransaction().commit();
         session.close();
-    }
-    public String hashUserPassword(String password) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] bytes = md5.digest(password.getBytes());
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02X", b));
-        }
-        return builder.toString();
     }
 }

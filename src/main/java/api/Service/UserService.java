@@ -38,19 +38,4 @@ public class UserService implements UserDetailsService {
     public User loadUserEntityByUsername(String username) throws UsernameNotFoundException {
         return dataAccessLayer.getUserFromDatabaseByUsername(username);
     }
-
-    public String hashUserPassword(String password) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        byte[] bytes = md5.digest(password.getBytes());
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(String.format("%02X", b));
-        }
-        return builder.toString();
-    }
 }
