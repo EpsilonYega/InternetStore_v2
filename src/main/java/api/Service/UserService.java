@@ -1,5 +1,6 @@
 package api.Service;
 
+import api.Configs.HashPassword;
 import api.Models.User;
 import api.Repositories.DataAccessLayer;
 import api.Security.UserDetailsImpl;
@@ -39,7 +40,17 @@ public class UserService implements UserDetailsService {
     }
 
     public String hashUserPassword(String password) {
-        HashPassword hashPassword = new HashPassword();
-        return hashPassword.hashUserPassword(password);
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] bytes = md5.digest(password.getBytes());
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02X", b));
+        }
+        return builder.toString();
     }
 }

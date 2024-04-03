@@ -1,11 +1,7 @@
-package api.Service;
+package api.Configs;
 
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class HashPassword {
     public String hashUserPassword(String password) {
@@ -21,7 +17,7 @@ public class HashPassword {
 //            builder.append(String.format("%02X", b));
 //        }
 //        return builder.toString();
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         return passwordEncoder.encode(password);
     }
 }

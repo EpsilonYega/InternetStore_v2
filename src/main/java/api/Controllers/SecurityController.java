@@ -2,6 +2,7 @@ package api.Controllers;
 
 import api.Main;
 import api.Security.JwtCore;
+import api.Configs.HashPassword;
 import api.Service.UserService;
 import api.dto.SigninRequest;
 import api.dto.SignupRequest;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
@@ -44,7 +46,6 @@ public class SecurityController {
     ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
 
         signinRequest.setPassword(userService.hashUserPassword(signinRequest.getPassword()));
-        log.info(signinRequest.getPassword());
 
         UserDetails user = userService.loadUserByUsername(signinRequest.getUserName());
 

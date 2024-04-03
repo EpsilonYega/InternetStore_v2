@@ -1,6 +1,6 @@
 package api.Repositories;
 
-import api.Service.HashPassword;
+import api.Configs.HashPassword;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -16,8 +16,10 @@ import api.Models.ProductEntities.Product;
 import api.Models.WarehouseEntities.Warehouse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,12 +57,21 @@ public class DataAccessLayer {
         if (userFrom != null) {
             return "Выберите другую почту";
         }
+        //TODO Удали
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] bytes = md5.digest(user.getPassword().getBytes());
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02X", b));
+        }
+        user.setPassword(builder.toString());
 
-        if (user.getUsername().toLowerCase().startsWith("admin")) user.setRole("ADMIN");
-        else user.setRole("USER");
-
-        HashPassword hashPassword = new HashPassword();
-        user.setPassword(hashPassword.hashUserPassword(user.getPassword()));
+//        user.setPassword(userService.hashUserPassword(user.getPassword()));
         session.persist(user);
         session.getTransaction().commit();
         session.close();
@@ -246,5 +257,19 @@ public class DataAccessLayer {
         session.remove(warehouse);
         session.getTransaction().commit();
         session.close();
+    }
+    public String hashUserPassword(String password) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] bytes = md5.digest(password.getBytes());
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(String.format("%02X", b));
+        }
+        return builder.toString();
     }
 }
